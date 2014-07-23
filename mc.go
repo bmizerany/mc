@@ -122,7 +122,7 @@ func (cn *Conn) Get(key string) (val string, cas int, flags uint32, err error) {
 		},
 
 		oextras: []interface{}{&flags},
-		key: key,
+		key:     key,
 	}
 
 	err = cn.send(m)
@@ -318,4 +318,59 @@ func readInt(b string) int {
 	}
 
 	panic(fmt.Sprintf("mc: don't know how to parse string with %d bytes", len(b)))
+}
+
+func (cn *Conn) Append(key, val string, ocas, flags, exp int) (err error) {
+	return cn.appendprepend(OpAppend, key, val, ocas, flags, exp)
+}
+
+func (cn *Conn) Prepend(key, val string, ocas, flags, exp int) (err error) {
+	return cn.appendprepend(OpPrepend, key, val, ocas, flags, exp)
+}
+
+func (cn *Conn) appendprepend(op uint8, key, val string, ocas, flags, exp int) (err error) {
+	m := &msg{
+		header: header{
+			Op:  op,
+			CAS: uint64(ocas),
+		},
+
+		key: key,
+		val: val,
+	}
+
+	return cn.send(m)
+}
+
+func (cn *Conn) Flush(delay int) (err error) {
+	m := &msg{
+		header: header{
+			Op: OpFlush,
+		},
+	}
+
+	return cn.send(m)
+}
+
+func (cn *Conn) Add(key, val string, ocas, flags, exp int) (err error) {
+	return cn.addreplace(OpAdd, key, val, ocas, flags, exp)
+}
+
+func (cn *Conn) Replace(key, val string, ocas, flags, exp int) (err error) {
+	return cn.addreplace(OpReplace, key, val, ocas, flags, exp)
+}
+
+func (cn *Conn) addreplace(op uint8, key, val string, ocas, flags, exp int) (err error) {
+	m := &msg{
+		header: header{
+			Op:  op,
+			CAS: uint64(ocas),
+		},
+
+		iextras: []interface{}{uint32(flags), uint32(exp)},
+		key:     key,
+		val:     val,
+	}
+
+	return cn.send(m)
 }
