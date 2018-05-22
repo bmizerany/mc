@@ -26,13 +26,13 @@
 			}
 			
 
-			val, cas, err = cn.Get("foo")
+			val, cas, flags, err := cn.Get("foo")
 			if err != nil {
 				...
 			}
 
-			exp = 3600 // 2 hours
-			err = cn.Set("foo", "bar", cas, exp)
+			exp := 3600 // 2 hours
+			err = cn.Set("foo", "bar", cas, 0, exp)
 			if err != nil {
 				...
 			}
@@ -50,7 +50,7 @@ trival to implement. If you'd like add one, please do so and send a pull request
 
 The current commands are:
 
-	Get, Set, Del, Incr, Decr
+	Get, Set, Del, Incr, Decr, Append, Prepend, Flush, Add, Replace
 
 ## Performance
 
