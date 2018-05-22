@@ -1,3 +1,6 @@
+>**This repository is no longer maintained. You can find an actively maintained version 
+>of `mc` in the [MemCachier fork](https://github.com/memcachier/mc).**
+
 # mc.go: A pure Go driver for Memcached (binary protocol, thread-safe)
 
 ## Install
